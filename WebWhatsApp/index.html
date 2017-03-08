@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title> Vpage Web Whatsapp </title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                user name :
+            </td>
+        
+            <td>
+                <input type="text" id="phoneNumber" style="width:400px ;"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                password :
+            </td>
+            <td>
+                <input type="password" id="password" style="width:400px ;" />
+            </td>
+        </tr>
+
+
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" id="btnLogin" value="Login"/>
+            </td>
+        </tr>
+    </table>
+
+
+    <!--  to show the details -->
+
+    <table>
+        <tr>
+            <td> 
+                To :
+            </td>
+            <td>
+                <input type="text" id="txtTo" style="width:400px;" />
+            </td>
+            
+        </tr>
+
+        <tr>
+            <td>
+                Message :
+            </td>
+            <td>
+                <textarea id="txtMessage" style="width:400px; height:70px"></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" id="btnSend" value="Send" />
+            </td>
+        </tr>
+    </table>
+
+    <ul id="status"></ul>
+
+
+    <script src="/Scripts/jquery-1.6.4.min.js"></script>
+    <script src="/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script type="text/javascript">
+        $(function () {
+            var chat = $.connection.chatHub;
+
+            chat.client.notifyMessage = function (message) {
+                var endCodeMessage = $('<div />')
+                    .text(message)
+                    .html();
+                $('#status').append(`<li>${message}</li>`);
+
+
+            };
+
+            $.connection.hub.start().done(function () {
+                $('#btnLogin').click(function () {
+                    var
+                        phoneNumber = $('#phoneNumber').val(),
+                        password = $('#password').val();
+
+                    chat.server.login(phoneNumber, password);
+                });
+
+                $('#btnSend').click(function () {
+                    var
+                        to = $('#txtTo').val(),
+                        message = $('#txtMessage').val();
+                    chat.seever.send(to, message);
+                });
+            });
+
+
+        });
+    </script>
+
+
+
+</body>
+</html>
